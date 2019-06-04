@@ -1,10 +1,12 @@
 
-require_relative './service'
+require_relative './init'
+require_relative './helpers/service_helper.rb'
+require_relative './helpers/provider_helper.rb'
+require_relative './models/service'
 require_relative './serviceProvider'
 require_relative './appointment'
 require_relative './timeblock'
 require_relative './print'
-require_relative './init'
 require_relative './colors'
 require_relative './availability'
 require 'tty-prompt'
@@ -15,36 +17,6 @@ def successPrint
   puts ''
 end
 
-def find_sp_by_service(serviceName)
-  sp_with_service = []
-  for sp in $all_sp do
-    for s in sp.services do
-      if s.name == serviceName
-        sp_with_service.push(sp)
-        break
-      end
-    end
-  end
-  return sp_with_service
-end
-
-def get_sp_by_name(name)
-  sp = $all_sp.select do |sp| 
-    sp.name == name
-  end
-  if sp.length == 1
-    return sp.first
-  else
-    return false
-  end
-end
-
-def serviceErrorMessage
-  puts ''
-  puts 'Service Provider Not Found...'
-  puts 'Choose from the following:'
-  spPrint($all_sp)
-end
 
 def serviceAdd
   service_name = $prompt.ask('Service Name:')
@@ -52,25 +24,25 @@ def serviceAdd
   service_length = $prompt.ask('Service Length (Mins):')
   loop do
     provider_name = $prompt.ask('Add to which provider?:')
-    sp = get_sp_by_name(provider_name)
+    sp = ProviderHelper.new.find_provider_by_name(provider_name)
     if sp
       sp.serviceAdd(Service.new(service_name, service_price, service_length))
       #successPrint()
       break
     else
-      serviceErrorMessage()
+      ServiceHelper.new.error_message
     end
   end
 end
 
 def serviceRemove
   puts "Choose Service to Remove"
-  servicePrint($all_sp)
+  servicePrint($all_providers)
   service_name = $prompt.ask('Service Name:')
   provider_name = $prompt.ask('Service Provider:')
   spToRemove = nil
   isFound = false
-  sp = $all_sp.select do |sp|
+  sp = $all_providers.select do |sp|
     if sp.name == provider_name
       spToRemove = sp
       isFound = true
@@ -81,25 +53,25 @@ def serviceRemove
     spToRemove.serviceRemove(service_name)
     successPrint()
   else
-    serviceErrorMessage()
+    ServiceHelper.new.error_message
   end
 end
 
 def spAdd
   provider_name = $prompt.ask('Provider Name:')
   provider_phone = $prompt.ask('Provider Phone Number:')
-  $all_sp.push(ServiceProvider.new(provider_name, provider_phone, [], {}, []))
+  $all_providers.push(ServiceProvider.new(provider_name, provider_phone, [], {}, []))
   successPrint()
 end
 
 def spRemove
   provider_name = $prompt.ask('Provider Name To Remove:')
-  $all_sp.each do |sp|
+  $all_providers.each do |sp|
     if sp.name == provider_name
       puts "Deleting #{provider_name}"
       confirm = y_or_n()
       if confirm
-        $all_sp.delete(sp)
+        $all_providers.delete(sp)
         successPrint()
       else
         puts 'Did Not Delete'
@@ -124,7 +96,7 @@ end
 def appointmentAdd
   client_name = $prompt.ask('Your Name:')
   puts "Hello #{client_name}! Choose Provider & Service to Schedule"
-  servicePrint($all_sp)
+  servicePrint($all_providers)
   provider_name = $prompt.ask('Provider Name:')
   service_name = $prompt.ask('Service Name:')
   month = $prompt.ask('Date (MM):')
@@ -137,7 +109,7 @@ def appointmentAdd
   puts 'Will This Appointment Reoccur Weekly?'
   isWeekly = y_or_n()
   puts(isWeekly)
-  sp = get_sp_by_name(provider_name)
+  sp = ProviderHelper.new.find_provider_by_name(provider_name)
   service = sp.containsService(service_name)
 
   start_datetime = DateTime.new(year.to_i, month.to_i, day.to_i, hour, minute)
@@ -160,7 +132,7 @@ def availabilityAdd
   end_hour = end_temp[0].to_i
   end_minute = end_temp[1].to_i
 
-  sp = get_sp_by_name(provider_name)
+  sp = ProviderHelper.new.find_provider_by_name(provider_name)
 
   start_datetime = DateTime.new(year.to_i, month.to_i, day.to_i, start_hour, start_minute)
   end_datetime = DateTime.new(year.to_i, month.to_i, day.to_i, end_hour, end_minute)
@@ -171,11 +143,11 @@ end
 
 def scheduleView
   puts "Choose a Service Provider to see their schedule:"
-  spPrint($all_sp)
+  spPrint($all_providers)
   provider_name = $prompt.ask('Provider Name:')
   spToUse = nil
   isFound = false
-  sp = $all_sp.select do |sp|
+  sp = $all_providers.select do |sp|
     if sp.name == provider_name
       spToUse = sp
       isFound = true
@@ -185,7 +157,7 @@ def scheduleView
   if isFound
     spToUse.scheduleView()
   else
-    serviceErrorMessage()
+    ServiceHelper.new.error_message
   end
 
 end
@@ -208,17 +180,17 @@ end
 commands = {
   's:add' => Proc.new{serviceAdd},
   's:remove' => Proc.new{serviceRemove},
-  's:list' => Proc.new{servicePrint($all_sp)},
+  's:list' => Proc.new{servicePrint($all_providers)},
   'sp:add' => Proc.new{spAdd},
   'sp:remove' => Proc.new{spRemove},
-  'sp:list' => Proc.new{spPrint($all_sp)},
+  'sp:list' => Proc.new{spPrint($all_providers)},
   'appt:add' => Proc.new{appointmentAdd},
   'avail:add' => Proc.new{availabilityAdd},
   'schedule:view' => Proc.new{scheduleView},
 }
 
 # INITIALIZE
-$all_sp = initData
+$all_providers = initData
 
 loop do
   next_prompt = $prompt.ask('Please enter a command:')
