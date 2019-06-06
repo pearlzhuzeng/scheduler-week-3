@@ -6,9 +6,13 @@ require_relative '../models/provider'
 $prompt = TTY::Prompt.new
 
 class ProvidersController
-  def add(name: nil, phone: nil)
-    name ||= $prompt.ask('Provider Name:')
-    phone ||= $prompt.ask('Provider Phone Number:')
+  def initialize(input_strategy)
+    @input_strategy = input_strategy
+  end
+
+  def add
+    name = @input_strategy.prompt('Provider Name:')
+    phone = @input_strategy.prompt('Provider Phone Number:')
     $all_providers.push(Provider.new(name, phone, [], {}, []))
     UtilityHelper.new.notify_success
   end
