@@ -150,37 +150,42 @@ def list_commands
   puts "--------------------------------"
 end
 
-commands = {
-  's:add' => Proc.new{serviceAdd},
-  's:remove' => Proc.new{serviceRemove},
-  's:list' => Proc.new{servicePrint($all_providers)},
-  'sp:add' => Proc.new{ProvidersController.new.add},
-  'sp:remove' => Proc.new{spRemove},
-  'sp:list' => Proc.new{spPrint($all_providers)},
-  'appt:add' => Proc.new{appointmentAdd},
-  'avail:add' => Proc.new{availabilityAdd},
-  'schedule:view' => Proc.new{scheduleView},
-}
-
 # INITIALIZE
 $all_providers = initData
 
-loop do
-  next_prompt = $prompt.ask('Please enter a command:')
-  puts ''
-  isCommand = false
-  commands.each do |command, function|
-    if next_prompt == command
-      function.call()
-      isCommand = true
+class Interface
+  COMMANDS = {
+    's:add' => Proc.new{serviceAdd},
+    's:remove' => Proc.new{serviceRemove},
+    's:list' => Proc.new{servicePrint($all_providers)},
+    'sp:add' => Proc.new{ProvidersController.new.add},
+    'sp:remove' => Proc.new{spRemove},
+    'sp:list' => Proc.new{spPrint($all_providers)},
+    'appt:add' => Proc.new{appointmentAdd},
+    'avail:add' => Proc.new{availabilityAdd},
+    'schedule:view' => Proc.new{scheduleView},
+  }
+  def start
+    loop do
+      next_prompt = $prompt.ask('Please enter a command:')
+      puts ''
+      isCommand = false
+      COMMANDS.each do |command, function|
+        if next_prompt == command
+          function.call()
+          isCommand = true
+        end
+      end
+      if !isCommand
+        puts "Unknown command #{Red}#{next_prompt}#{Reset}"
+        list_commands
+        next
+      end
     end
   end
-  if !isCommand
-    puts "Unknown command #{Red}#{next_prompt}#{Reset}"
-    list_commands
-    next
-  end
 end
+
+Interface.new.start
 
 
 

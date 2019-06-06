@@ -1,14 +1,15 @@
 require 'tty-prompt'
 require_relative '../helpers/provider_helper'
 require_relative '../helpers/utility_helper'
+require_relative '../models/provider'
 
 $prompt = TTY::Prompt.new
 
 class ProvidersController
-  def add
-    provider_name = $prompt.ask('Provider Name:')
-    provider_phone = $prompt.ask('Provider Phone Number:')
-    $all_providers.push(Provider.new(provider_name, provider_phone, [], {}, []))
+  def add(name: nil, phone: nil)
+    name ||= $prompt.ask('Provider Name:')
+    phone ||= $prompt.ask('Provider Phone Number:')
+    $all_providers.push(Provider.new(name, phone, [], {}, []))
     UtilityHelper.new.notify_success
   end
   
