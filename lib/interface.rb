@@ -1,4 +1,3 @@
-
 require_relative '../init'
 require_relative '../helpers/service_helper.rb'
 require_relative '../helpers/provider_helper.rb'
@@ -187,25 +186,6 @@ class Interface
         list_commands
         next
       end
-    end
-  end
-end
-
-class PromptInputStrategy
-  def prompt(value)
-    $prompt.ask(value)
-  end
-end
-
-class CommandScriptStrategy
-  def initialize(command_script_items)
-    @command_script_items = command_script_items
-    @current_index = 0
-  end
-
-  def prompt(key)
-    @command_script_items[@current_index][key].tap do
-      @current_index += 1
     end
   end
 end

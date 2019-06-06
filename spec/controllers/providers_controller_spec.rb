@@ -1,5 +1,6 @@
-require_relative '../../models/interface'
 require_relative '../../controllers/providers_controller'
+require_relative '../../lib/interface'
+require_relative '../../lib/command_script_strategy'
 
 RSpec.describe ProvidersController do
   it 'adds a provider to the list' do
