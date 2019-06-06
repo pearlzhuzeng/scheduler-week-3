@@ -204,8 +204,8 @@ class CommandScriptStrategy
   end
 
   def prompt(key)
-    input = @command_script_items[@current_index][key]
-    @current_index += 1
-    input
+    @command_script_items[@current_index][key].tap do
+      @current_index += 1
+    end
   end
 end
