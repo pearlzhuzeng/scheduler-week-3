@@ -3,7 +3,9 @@ require_relative './init'
 require_relative './helpers/service_helper.rb'
 require_relative './helpers/provider_helper.rb'
 require_relative './models/service'
-require_relative './serviceProvider'
+require_relative './models/provider'
+require_relative './controllers/services_controller'
+require_relative './controllers/providers_controller'
 require_relative './appointment'
 require_relative './timeblock'
 require_relative './print'
@@ -11,12 +13,6 @@ require_relative './colors'
 require_relative './availability'
 require 'tty-prompt'
 $prompt = TTY::Prompt.new
-
-def successPrint
-  puts 'Success!'
-  puts ''
-end
-
 
 def serviceAdd
   service_name = $prompt.ask('Service Name:')
@@ -27,7 +23,7 @@ def serviceAdd
     sp = ProviderHelper.new.find_provider_by_name(provider_name)
     if sp
       sp.serviceAdd(Service.new(service_name, service_price, service_length))
-      #successPrint()
+      #UtilityHelper.new.notify_success
       break
     else
       ServiceHelper.new.error_message
@@ -51,32 +47,9 @@ def serviceRemove
   end
   if isFound
     spToRemove.serviceRemove(service_name)
-    successPrint()
+    UtilityHelper.new.notify_success
   else
     ServiceHelper.new.error_message
-  end
-end
-
-def spAdd
-  provider_name = $prompt.ask('Provider Name:')
-  provider_phone = $prompt.ask('Provider Phone Number:')
-  $all_providers.push(ServiceProvider.new(provider_name, provider_phone, [], {}, []))
-  successPrint()
-end
-
-def spRemove
-  provider_name = $prompt.ask('Provider Name To Remove:')
-  $all_providers.each do |sp|
-    if sp.name == provider_name
-      puts "Deleting #{provider_name}"
-      confirm = y_or_n()
-      if confirm
-        $all_providers.delete(sp)
-        successPrint()
-      else
-        puts 'Did Not Delete'
-      end
-    end
   end
 end
 
@@ -114,7 +87,7 @@ def appointmentAdd
 
   start_datetime = DateTime.new(year.to_i, month.to_i, day.to_i, hour, minute)
   sp.add_appointment(service, TimeBlock.new(start_datetime, isWeekly, service.length), client_name)
-  successPrint()
+  UtilityHelper.new.notify_success
 end
 
 def availabilityAdd
@@ -138,7 +111,7 @@ def availabilityAdd
   end_datetime = DateTime.new(year.to_i, month.to_i, day.to_i, end_hour, end_minute)
   #sp.add_appointment(service, TimeBlock.new(month, day, year, start_datetime, isWeekly, service.length), client_name)
   sp.add_availability(start_datetime, end_datetime)
-  successPrint()
+  UtilityHelper.new.notify_success
 end
 
 def scheduleView
@@ -181,7 +154,7 @@ commands = {
   's:add' => Proc.new{serviceAdd},
   's:remove' => Proc.new{serviceRemove},
   's:list' => Proc.new{servicePrint($all_providers)},
-  'sp:add' => Proc.new{spAdd},
+  'sp:add' => Proc.new{ProvidersController.new.add},
   'sp:remove' => Proc.new{spRemove},
   'sp:list' => Proc.new{spPrint($all_providers)},
   'appt:add' => Proc.new{appointmentAdd},
