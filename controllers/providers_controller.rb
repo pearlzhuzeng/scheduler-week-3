@@ -1,7 +1,8 @@
 require 'tty-prompt'
+require_relative '../models/provider'
+
 require_relative '../helpers/provider_helper'
 require_relative '../helpers/utility_helper'
-require_relative '../models/provider'
 
 $prompt = TTY::Prompt.new
 
@@ -18,13 +19,13 @@ class ProvidersController
   end
   
   def remove
-    provider_name = $prompt.ask('Provider Name To Remove:')
-    $all_providers.each do |sp|
-      if sp.name == provider_name
-        puts "Deleting #{provider_name}"
-        confirm = y_or_n()
+    name = @input_strategy.prompt('Provider Name To Remove:')
+    $all_providers.each do |provider|
+      if provider.name == name
+        puts "Deleting #{name}"
+        confirm = UtilityHelper.new.yes_or_no
         if confirm
-          $all_providers.delete(sp)
+          $all_providers.delete(provider)
           UtilityHelper.new.notify_success
         else
           puts 'Did Not Delete'

@@ -52,19 +52,6 @@ def serviceRemove
   end
 end
 
-def y_or_n
-  loop do
-    yn = $prompt.ask('(y/n):')
-    if yn == 'y'
-      return true
-    elsif yn == 'n'
-      return false
-    else
-      puts "Enter y or n"
-    end
-  end
-end
-
 def appointmentAdd
   client_name = $prompt.ask('Your Name:')
   puts "Hello #{client_name}! Choose Provider & Service to Schedule"
@@ -162,7 +149,7 @@ class Interface
     's:remove' => Proc.new{serviceRemove},
     's:list' => Proc.new{servicePrint($all_providers)},
     'sp:add' => Proc.new { |input_strategy| ProvidersController.new(input_strategy).add},
-    'sp:remove' => Proc.new{spRemove},
+    'sp:remove' => Proc.new { |input_strategy| ProvidersController.new(input_strategy).remove},
     'sp:list' => Proc.new{spPrint($all_providers)},
     'appt:add' => Proc.new{appointmentAdd},
     'avail:add' => Proc.new{availabilityAdd},
