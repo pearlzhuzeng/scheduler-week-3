@@ -197,14 +197,14 @@ class PromptInputStrategy
   end
 end
 
-class TextInputStrategy
-  def initialize(inputs)
-    @inputs = inputs
+class CommandScriptStrategy
+  def initialize(command_script_items)
+    @command_script_items = command_script_items
     @current_index = 0
   end
 
   def prompt(key)
-    input = @inputs[@current_index][key]
+    input = @command_script_items[@current_index][key]
     @current_index += 1
     input
   end
