@@ -1,8 +1,10 @@
 # Scheduler
 
 A program to help schedule appointments for service providers.
+
 Project description: https://gist.github.com/jasonswett/68e557c59d3a3473d3bbf669ea8fdd66
-The starter code was from a different group's week 1 code.
+
+The starter code was from [a different group's week 1 code](https://github.com/pearlzhuzeng/scheduler-week-2/commit/305fefaadc133ab87e6441145368316a5c3fba75).
 
 ## Current Functionality
 
