@@ -1,126 +1,135 @@
-  # name
-  # phoneNum
-  # services = []
-  # availability = hash{day:[TimeBlocks]}
-  # appointments = []
+require 'date'
+require_relative '../models/service'
+require_relative '../models/availability'
+require_relative '../models/appointment'
 
 class Provider
-  attr_reader :name, :phoneNum, :services, :availability, :appointments, :serviceAdd
-  def initialize(name, phoneNum, services, availability, appointments) (
+  attr_reader :name, :phone_number, :services, :availabilities, :appointments
+
+  def initialize(name, phone_number, services = [], availabilities = [], appointments = [])
     @name = name
-    @phoneNum = phoneNum
+    @phone_number = phone_number
     @services = services
-    @availability = availability
+    @availabilities = availabilities
     @appointments = appointments
-  )
   end
 
-  def serviceRemove(service_name) (
+  def self.all
+    @providers
+  end
+
+  def save
+    self.class.all << self
+  end
+
+  def self.find_provider_by_service(service_name)
+    providers = []
+    for provider in @providers do
+      for service in provider.services do
+        if service.name == service_name
+          providers << provider
+          break
+        end
+      end
+    end
+    return providers
+  end
+
+  def self.find_provider_by_name(provider_name)
+    provider = @providers.select do |provider| 
+      provider.name == provider_name
+    end
+
+    if provider.length == 1
+      return provider.first
+    else
+      return false
+    end
+  end
+
+  def add_service(service)
+    @services.push(service)
+  end
+
+  def remove_service(service_name)
     for service in @services do
       if service.name == service_name
         @services.delete(service)
       end
     end
-    )
   end
 
-  def printServices()
+  def print_services
     puts "#{Magenta}#{@name}'s#{Reset} Services:"
-    @services.each do |s|
-      s.printDetails
+    @services.each do |service|
+      service.print_details
     end
   end
 
-  def scheduleView()
-    puts "#{Magenta}#{@name}'s#{Reset} Appointments:"
-    i = 1;
-    @appointments.each do |a|
-      puts "#{BgCyan}APPOINTMENT #{i}#{Reset}"
-      a.printDetails
-      i += 1
-    end
-  end
-
-  def containsService(name) (
+  def contains_service?(name)
     for service in @services do
       if service.name == name
         return service
       end
     end
     return false
-  )
-  end
-
-  def serviceAdd(service) (
-    @services.push(service)
-  )
   end
   
-  def is_available(service, timeblock, isWeekly)
-    #add check to make sure timeblock is in the future
-    is_future_date = (timeblock.startTime >= DateTime.now)
-    puts is_future_date
+  def add_availability(start_timeblock, end_timeblock)
+    #need to add a check here
+    availability = Availability.new(start_timeblock, end_timeblock, self)
+    @availabilities << availability
+  end
 
-    #check if provider offers service
-    service_offered = containsService(service.name)
-    puts('past service_offered')
+  def add_appointment(service, timeblock, client)
+    #add appointment to provider's schedule
+    if is_available(service, timeblock, timeblock.is_weekly)
+      puts("Success!")
+      appointment = Appointment.new(timeblock, service, client, self)
+      @appointments << appointment
+    end
+  end
+  
+  def is_available(service, timeblock, is_weekly)
+    is_future_date = (timeblock.start_time >= DateTime.now)
 
-    #check provider's availability
-    availability_blocks = @availability[timeblock.dayOfWeek]
-    puts('past availability_blocks')
-    #IDK what is wrong with this but causes program to crash, commented out for now
-    # provider_available = false
-    # for block in availability_blocks do
-    #   if block.contains(timeblock)
-    #     provider_available = true
-    #   end
-    # end
-    #
-    provider_available = true
+    service_offered = contains_service?(service.name)
 
-    puts('here')
+    provider_available = false
+    puts @availabilities
+    @availabilities.each do |availability|
+      puts availability.timeblock
+      if availability.timeblock.contains(timeblock)
+        provider_available = true
+      end
+    end
 
-    #check for overlap with provider's appointments
     no_overlap_with_appointments = true
-    puts(@appointments)
-    puts(appointments)
-    puts('-----------------')
     @appointments.each do |appointment|
-      #check for overlap if either appointment is weekly
-
-      if appointment.timeblock.isWeekly || isWeekly
-        if appointment.timeblock.dayOfWeek == timeblock.dayOfWeek
+      if appointment.timeblock.is_weekly || is_weekly
+        if appointment.timeblock.day_of_week == timeblock.day_of_week
           if appointment.timeblock.overlaps_time(timeblock)
             no_overlap_with_appointments = false
           end
         end
       end
-      #check for overlap if dates are the same
 
       if appointment.timeblock.overlaps(timeblock)
         no_overlap_with_appointments = false
       end
     end
+
     return is_future_date && service_offered && 
       provider_available && no_overlap_with_appointments
-
   end
 
-  def add_appointment(service, timeblock, client)
-    #add appointment to provider's schedule
-    if is_available(service, timeblock, timeblock.isWeekly)
-      puts("Success!")
-      appointment = Appointment.new(timeblock, service, client, self)
-      @appointments << appointment
+  def view_schedule
+    puts "#{Magenta}#{@name}'s#{Reset} Appointments:"
+    i = 1;
+    @appointments.each do |a|
+      puts "#{BgCyan}APPOINTMENT #{i}#{Reset}"
+      a.print_details
+      i += 1
     end
-
   end
-
-  def add_availability(start_timeblock, end_timeblock)
-    #need to add a check here
-    availability_block = Availability.new(start_timeblock, end_timeblock, self)
-    @availability << availability_block
-  end
-
-
 end
