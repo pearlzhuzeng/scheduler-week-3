@@ -6,7 +6,7 @@ class ServiceHelper
     puts ''
     puts 'Service Provider Not Found...'
     puts 'Choose from the following:'
-    utilityHelper.new.print_providers(Provider.all)
+    UtilityHelper.new.print_providers(Provider.all)
   end
 end
 
