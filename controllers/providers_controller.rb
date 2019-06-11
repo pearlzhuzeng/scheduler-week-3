@@ -21,9 +21,11 @@ class ProvidersController
   end
 
   def self.add(input_strategy)
-    name = input_strategy.ask('Provider Name:')
-    phone = input_strategy.ask('Provider Phone Number:')
-    Provider.new(name, phone, [], {}, []).save
+    name = self.add_provider_name(input_strategy)
+    phone = self.add_provider_phone(input_strategy)
+    selected_services = self.select_services(input_strategy)
+    Provider.new(name, phone, selected_services, [], []).save
+    self.add_availability(name, input_strategy)
     UtilityHelper.new.notify_success
   end
   
@@ -62,6 +64,64 @@ class ProvidersController
       provider_candidate.view_schedule
     else
       ServiceHelper.new.error_message
+    end
+  end
+
+  def self.provider_exists?(name)
+    provider_exists = false
+    Provider.all.map do |provider|
+      provider_exists = true if provider.name == name
+    end
+    provider_exists
+  end
+
+  def self.valid_phone?(phone)
+    phone.to_i.to_s == phone && phone.length == 10
+  end
+
+  def self.add_provider_name(input_strategy)
+    valid_provider_name = false
+    while !valid_provider_name
+      name = input_strategy.ask('Provider Name:')
+      if self.provider_exists?(name)
+        puts('This provider already exists. Please enter a different name.')
+      else
+        valid_provider_name = true if !self.provider_exists?(name)
+      end
+    end
+    name
+  end
+
+  def self.add_provider_phone(input_strategy)
+    valid_phone = false
+    while !valid_phone
+      phone = input_strategy.ask('Provider Phone Number:')
+      if !self.valid_phone?(phone)
+        puts('Please enter a valid 10-digit phone number.')
+      else
+        valid_phone = true
+      end
+    end
+    phone
+  end
+
+  def self.select_services(input_strategy)
+    selected_services_names = input_strategy.multi_select("What services does this provider offer?", 
+      Service.all.map(&:name))
+    selected_services = []
+    selected_services_names.each do |service_name|
+      service = Service.find_service_by_name(service_name)
+      selected_services << service
+    end
+    selected_services
+  end
+
+  def self.add_availability(name, input_strategy)
+    done_adding_availability = false
+    while !done_adding_availability
+      puts("What is this provider's availability?")
+      AvailabilitiesController.add_to_provider(name)
+      done_adding_availability = !input_strategy.yes_or_no("Would you like to continue adding availability?")
     end
   end
 end
