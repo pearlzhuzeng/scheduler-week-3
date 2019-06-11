@@ -4,7 +4,7 @@ require_relative '../lib/prompt_input_strategy'
 require_relative '../helpers/utility_helper'
 
 class ProvidersController
-  def self.index
+  def self.index(*args)
     puts "Here's the current list of providers:"
 
     Provider.all.map do |provider|
@@ -20,19 +20,19 @@ class ProvidersController
     end
   end
 
-  def self.add
-    name = PromptInputStrategy.new.ask('Provider Name:')
-    phone = PromptInputStrategy.new.ask('Provider Phone Number:')
+  def self.add(input_strategy)
+    name = input_strategy.ask('Provider Name:')
+    phone = input_strategy.ask('Provider Phone Number:')
     Provider.new(name, phone, [], {}, []).save
     UtilityHelper.new.notify_success
   end
   
-  def self.remove
-    name = PromptInputStrategy.new.ask('Provider Name To Remove:')
+  def self.remove(input_strategy)
+    name = input_strategy.ask('Provider Name To Remove:')
     Provider.all.each do |provider|
       if provider.name == name
         puts "Deleting #{name}"
-        confirm = PromptInputStrategy.new.ask('(y/n):')
+        confirm = input_strategy.ask('(y/n):')
         if confirm == 'y'
           Provider.all.delete(provider)
           UtilityHelper.new.notify_success
@@ -43,7 +43,7 @@ class ProvidersController
     end
   end
 
-  def self.view_schedule
+  def self.view_schedule(*args)
     puts "Choose a Service Provider to see their schedule:"
     UtilityHelper.new.print_providers(Provider.all)
 

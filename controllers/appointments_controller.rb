@@ -5,7 +5,7 @@ require_relative '../models/appointment'
 require_relative '../models/timeblock'
 
 class AppointmentsController
-  def self.add
+  def self.add(*args)
     client_name = PromptInputStrategy.new.ask('Your Name:')
     puts "Hello #{client_name}! Please choose provider & service to schedule."
     UtilityHelper.new.print_provider_services(Provider.all)

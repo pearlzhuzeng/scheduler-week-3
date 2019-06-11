@@ -1,6 +1,8 @@
 require 'tty-prompt'
 
-class PromptInputStrategy
+require_relative './input_strategy'
+
+class PromptInputStrategy < InputStrategy
   def initialize
     @prompt = TTY::Prompt.new
   end

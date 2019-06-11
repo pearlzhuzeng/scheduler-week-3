@@ -5,20 +5,23 @@ require_relative '../controllers/appointments_controller'
 require_relative '../controllers/availabilities_controller'
 require_relative '../controllers/providers_controller'
 require_relative '../controllers/services_controller'
+require_relative './prompt_input_strategy'
 
 class Interface
   FUNCTION_LOOKUP = {
 		"Add a provider" => {
 			controller: ProvidersController,
-			method_name: :add
+      method_name: :add,
+      args: PromptInputStrategy.new
 		},
 		"Remove a provider" => {
 			controller: ProvidersController,
-			method_name: :remove
+      method_name: :remove,
+      args: PromptInputStrategy.new
     },
     "Display all providers" => {
       controller: ProvidersController,
-      method_name: :index
+      method_name: :index,
     },
 		"Add a service" => {
 			controller: ServicesController,
@@ -55,7 +58,7 @@ class Interface
 
     while continue_program do
       choice = @input_strategy.select("What would you like to do?", FUNCTION_LOOKUP.keys)
-      FUNCTION_LOOKUP[choice][:controller].send(FUNCTION_LOOKUP[choice][:method_name])
+      FUNCTION_LOOKUP[choice][:controller].send(FUNCTION_LOOKUP[choice][:method_name], FUNCTION_LOOKUP[choice][:args])
     end
 	end
 end

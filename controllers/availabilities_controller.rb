@@ -1,7 +1,7 @@
 require_relative '../lib/prompt_input_strategy'
 
 class AvailabilitiesController
-  def self.add
+  def self.add(*args)
     provider_name = PromptInputStrategy.new.ask('Provider Name:')
     month = PromptInputStrategy.new.ask('Date (MM):')
     day = PromptInputStrategy.new.ask('Date (DD):')

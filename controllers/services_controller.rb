@@ -5,7 +5,7 @@ require_relative '../models/service'
 require_relative '../models/provider'
 
 class ServicesController
-  def self.index
+  def self.index(*args)
     puts "Here's the current list of services:"
     
     Service.all.map do |service|
@@ -14,7 +14,7 @@ class ServicesController
     end
   end
 
-  def self.add
+  def self.add(*args)
     name = PromptInputStrategy.new.ask('Service Name:')
     price = PromptInputStrategy.new.ask('Service Price:')
     length = PromptInputStrategy.new.ask('Service Length (Mins):')
@@ -33,7 +33,7 @@ class ServicesController
     end
   end
 
-  def self.remove
+  def self.remove(*args)
     puts "Choose Service to Remove"
     UtilityHelper.new.print_provider_services(Provider.all)
     service_name = PromptInputStrategy.new.ask('Service Name:')
