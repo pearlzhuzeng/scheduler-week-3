@@ -17,6 +17,18 @@ class Service
     self.class.all << self
   end
 
+  def self.find_service_by_name(service_name)
+    service = @services.select do |service| 
+      service.name == service_name
+    end
+
+    if service.length == 1
+      return service.first
+    else
+      return false
+    end
+  end
+
   def print_details
     puts "#{Cyan}#{@name}#{Reset}, #{Green}$#{@price}#{Reset}, #{Yellow}#{@length} Minutes#{Reset}"
   end
