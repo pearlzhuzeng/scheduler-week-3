@@ -14,4 +14,21 @@ class PromptInputStrategy < InputStrategy
   def select(question, choices)
     @prompt.select(question, choices)
   end
+
+  def multi_select(question, choices)
+  	@prompt.multi_select(question, choices)
+  end
+
+  def yes_or_no(question)
+  	loop do
+      y_n = PromptInputStrategy.new.ask(question + ' (y/n):')
+      if y_n == 'y'
+        return true
+      elsif y_n == 'n'
+        return false
+      else
+        puts "Please enter y or n."
+      end
+    end
+  end
 end
