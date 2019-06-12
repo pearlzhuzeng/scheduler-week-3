@@ -19,6 +19,18 @@ class CommandScriptStrategy
       @current_index += 1
     end
   end
+
+  def multi_select(key, value)
+    @command_script_items[@current_index][key].tap do
+      @current_index += 1
+    end
+  end
+
+  def yes_or_no(key)
+  	@command_script_items[@current_index][key].tap do
+      @current_index += 1
+    end
+  end
 end
 
 

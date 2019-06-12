@@ -20,11 +20,11 @@ class ProvidersController
   end
 
   def self.add
-    name = self.add_provider_name
-    phone = self.add_provider_phone
-    selected_services = self.select_services
+    name = add_provider_name
+    phone = add_provider_phone
+    selected_services = select_services
     Provider.new(name, phone, selected_services, [], []).save
-    self.add_availability(name)
+    add_availability(name)
     UtilityHelper.new.notify_success
   end
   
