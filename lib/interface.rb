@@ -11,13 +11,11 @@ class Interface
   FUNCTION_LOOKUP = {
 		"Add a provider" => {
 			controller: ProvidersController,
-      method_name: :add,
-      args: PromptInputStrategy.new
+      method_name: :add
 		},
 		"Remove a provider" => {
 			controller: ProvidersController,
-      method_name: :remove,
-      args: PromptInputStrategy.new
+      method_name: :remove
     },
     "Display all providers" => {
       controller: ProvidersController,
@@ -58,7 +56,7 @@ class Interface
 
     while continue_program do
       choice = @input_strategy.select("What would you like to do?", FUNCTION_LOOKUP.keys)
-      FUNCTION_LOOKUP[choice][:controller].send(FUNCTION_LOOKUP[choice][:method_name], FUNCTION_LOOKUP[choice][:args])
+      FUNCTION_LOOKUP[choice][:controller].send(FUNCTION_LOOKUP[choice][:method_name])
     end
 	end
 end

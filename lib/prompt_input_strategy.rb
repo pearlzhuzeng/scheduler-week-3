@@ -21,7 +21,7 @@ class PromptInputStrategy < InputStrategy
 
   def yes_or_no(question)
   	loop do
-      y_n = PromptInputStrategy.new.ask(question + ' (y/n):')
+      y_n = @prompt.ask(question + ' (y/n):')
       if y_n == 'y'
         return true
       elsif y_n == 'n'

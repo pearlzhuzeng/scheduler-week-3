@@ -1,10 +1,9 @@
 require_relative '../seed'
 require_relative '../models/provider'
-require_relative '../lib/prompt_input_strategy'
 require_relative '../helpers/utility_helper'
 
 class ProvidersController
-  def self.index(*args)
+  def self.index
     puts "Here's the current list of providers:"
 
     Provider.all.map do |provider|
@@ -20,21 +19,21 @@ class ProvidersController
     end
   end
 
-  def self.add(input_strategy)
-    name = self.add_provider_name(input_strategy)
-    phone = self.add_provider_phone(input_strategy)
-    selected_services = self.select_services(input_strategy)
+  def self.add
+    name = self.add_provider_name
+    phone = self.add_provider_phone
+    selected_services = self.select_services
     Provider.new(name, phone, selected_services, [], []).save
-    self.add_availability(name, input_strategy)
+    self.add_availability(name)
     UtilityHelper.new.notify_success
   end
   
-  def self.remove(input_strategy)
-    name = input_strategy.ask('Provider Name To Remove:')
+  def self.remove
+    name = $input_strategy.ask('Provider Name To Remove:')
     Provider.all.each do |provider|
       if provider.name == name
         puts "Deleting #{name}"
-        confirm = input_strategy.ask('(y/n):')
+        confirm = $input_strategy.ask('(y/n):')
         if confirm == 'y'
           Provider.all.delete(provider)
           UtilityHelper.new.notify_success
@@ -45,11 +44,11 @@ class ProvidersController
     end
   end
 
-  def self.view_schedule(*args)
+  def self.view_schedule
     puts "Choose a Service Provider to see their schedule:"
     UtilityHelper.new.print_providers(Provider.all)
 
-    provider_name = PromptInputStrategy.new.ask('Provider Name:')
+    provider_name = $input_strategy.ask('Provider Name:')
 
     provider_candidate = nil
     is_found = false
@@ -79,10 +78,10 @@ class ProvidersController
     phone.to_i.to_s == phone && phone.length == 10
   end
 
-  def self.add_provider_name(input_strategy)
+  def self.add_provider_name
     valid_provider_name = false
     while !valid_provider_name
-      name = input_strategy.ask('Provider Name:')
+      name = $input_strategy.ask('Provider Name:')
       if self.provider_exists?(name)
         puts('This provider already exists. Please enter a different name.')
       else
@@ -92,10 +91,10 @@ class ProvidersController
     name
   end
 
-  def self.add_provider_phone(input_strategy)
+  def self.add_provider_phone
     valid_phone = false
     while !valid_phone
-      phone = input_strategy.ask('Provider Phone Number:')
+      phone = $input_strategy.ask('Provider Phone Number:')
       if !self.valid_phone?(phone)
         puts('Please enter a valid 10-digit phone number.')
       else
@@ -105,8 +104,8 @@ class ProvidersController
     phone
   end
 
-  def self.select_services(input_strategy)
-    selected_services_names = input_strategy.multi_select("What services does this provider offer?", 
+  def self.select_services
+    selected_services_names = $input_strategy.multi_select("What services does this provider offer?", 
       Service.all.map(&:name))
     selected_services = []
     selected_services_names.each do |service_name|
@@ -116,12 +115,12 @@ class ProvidersController
     selected_services
   end
 
-  def self.add_availability(name, input_strategy)
+  def self.add_availability(name)
     done_adding_availability = false
     while !done_adding_availability
       puts("What is this provider's availability?")
       AvailabilitiesController.add_to_provider(name)
-      done_adding_availability = !input_strategy.yes_or_no("Would you like to continue adding availability?")
+      done_adding_availability = !$input_strategy.yes_or_no("Would you like to continue adding availability?")
     end
   end
 end

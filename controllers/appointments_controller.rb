@@ -1,21 +1,21 @@
 require 'date'
-require_relative '../lib/prompt_input_strategy'
+
 require_relative '../helpers/utility_helper'
 require_relative '../models/appointment'
 require_relative '../models/timeblock'
 
 class AppointmentsController
-  def self.add(*args)
-    client_name = PromptInputStrategy.new.ask('Your Name:')
+  def self.add
+    client_name = $input_strategy.ask('Your Name:')
     puts "Hello #{client_name}! Please choose provider & service to schedule."
     UtilityHelper.new.print_provider_services(Provider.all)
 
-    provider_name = PromptInputStrategy.new.ask('Provider Name:')
-    service_name = PromptInputStrategy.new.ask('Service Name:')
-    month = PromptInputStrategy.new.ask('Date (MM):')
-    day = PromptInputStrategy.new.ask('Date (DD):')
-    year = PromptInputStrategy.new.ask('Date (YYYY):')
-    start_time = PromptInputStrategy.new.ask('Start Time (ex: 13:30):')
+    provider_name = $input_strategy.ask('Provider Name:')
+    service_name = $input_strategy.ask('Service Name:')
+    month = $input_strategy.ask('Date (MM):')
+    day = $input_strategy.ask('Date (DD):')
+    year = $input_strategy.ask('Date (YYYY):')
+    start_time = $input_strategy.ask('Start Time (ex: 13:30):')
 
     temp = start_time.split(':')
     hour = temp[0].to_i

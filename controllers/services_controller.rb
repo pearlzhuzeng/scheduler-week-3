@@ -5,7 +5,7 @@ require_relative '../models/service'
 require_relative '../models/provider'
 
 class ServicesController
-  def self.index(*args)
+  def self.index
     puts "Here's the current list of services:"
     
     Service.all.map do |service|
@@ -14,13 +14,13 @@ class ServicesController
     end
   end
 
-  def self.add(*args)
-    name = PromptInputStrategy.new.ask('Service Name:')
-    price = PromptInputStrategy.new.ask('Service Price:')
-    length = PromptInputStrategy.new.ask('Service Length (Mins):')
+  def self.add
+    name = $input_strategy.ask('Service Name:')
+    price = $input_strategy.ask('Service Price:')
+    length = $input_strategy.ask('Service Length (Mins):')
     
     loop do
-      provider_name = PromptInputStrategy.new.ask('Add to which provider?:')
+      provider_name = $input_strategy.ask('Add to which provider?:')
       provider = Provider.find_provider_by_name(provider_name)
       if provider
         service = Service.new(name, price, length)
@@ -33,11 +33,11 @@ class ServicesController
     end
   end
 
-  def self.remove(*args)
+  def self.remove
     puts "Choose Service to Remove"
     UtilityHelper.new.print_provider_services(Provider.all)
-    service_name = PromptInputStrategy.new.ask('Service Name:')
-    provider_name = PromptInputStrategy.new.ask('Service Provider:')
+    service_name = $input_strategy.ask('Service Name:')
+    provider_name = $input_strategy.ask('Service Provider:')
     provider_to_remove_from = nil
     is_found = false
     provider = Provider.all.select do |provider|

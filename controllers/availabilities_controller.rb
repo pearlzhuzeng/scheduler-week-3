@@ -1,18 +1,17 @@
 require 'date'
-require_relative '../lib/prompt_input_strategy'
 
 class AvailabilitiesController
-  def self.add(*args)
-    provider_name = PromptInputStrategy.new.ask('Provider Name:')
+  def self.add
+    provider_name = $input_strategy.ask('Provider Name:')
     add_to_provider(provider_name)
   end
 
   def self.add_to_provider(provider_name)
-    month = PromptInputStrategy.new.ask('Date (MM):')
-    day = PromptInputStrategy.new.ask('Date (DD):')
-    year = PromptInputStrategy.new.ask('Date (YYYY):')
-    start_time = PromptInputStrategy.new.ask('Start Time (ex: 13:30):')
-    end_time = PromptInputStrategy.new.ask('End Time (ex: 14:30):')
+    month = $input_strategy.ask('Date (MM):')
+    day = $input_strategy.ask('Date (DD):')
+    year = $input_strategy.ask('Date (YYYY):')
+    start_time = $input_strategy.ask('Start Time (ex: 13:30):')
+    end_time = $input_strategy.ask('End Time (ex: 14:30):')
     start_datetime = format_datetime(month, day, year, start_time)
     end_datetime = format_datetime(month, day, year, end_time)
 

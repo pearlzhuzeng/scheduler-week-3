@@ -6,12 +6,12 @@ require_relative '../../lib/command_script_strategy'
 RSpec.describe ProvidersController do
   describe '#add' do
     it 'adds a provider to the list' do
-      command_script_strategy = CommandScriptStrategy.new([
+      $input_strategy = CommandScriptStrategy.new([
         { 'Provider Name:' => 'Jason' },
         { 'Provider Phone Number:' => '5558889981' },
       ])
 
-      ProvidersController.add(command_script_strategy)
+      ProvidersController.add
 
       expect(Provider.find_provider_by_name('Jason').name).to eq ('Jason')
     end
