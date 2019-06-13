@@ -15,9 +15,9 @@ class ServicesController
   end
 
   def self.add
-    name = $input_strategy.ask('Service Name:')
-    price = $input_strategy.ask('Service Price:')
-    length = $input_strategy.ask('Service Length (Mins):')
+    name = add_service_name
+    price = add_service_price
+    length = add_service_length
     
     loop do
       provider_name = $input_strategy.ask('Add to which provider?:')
@@ -53,5 +53,44 @@ class ServicesController
     else
       ServiceHelper.new.error_message
     end
+  end
+
+  private
+
+  def self.add_service_name
+    loop do
+      name = $input_strategy.ask('Service Name:')
+      if Service.find_service_by_name(name)
+        puts "This service already exists. Please enter a different service name."
+      else
+        return name
+      end
+    end
+  end
+
+  def self.add_service_price
+    loop do
+      price = $input_strategy.ask('Service Price:')
+      if !numeric?(price)
+        puts "Invalid price. Please enter a number."
+      else
+        return price
+      end
+    end
+  end
+
+  def self.add_service_length
+    loop do
+      length = $input_strategy.ask('Service Length (Mins):')
+      if !numeric?(length)
+        puts "Invalid length. Please enter a number."
+      else
+        return length
+      end
+    end
+  end
+
+  def self.numeric?(string)
+    Float(string) != nil rescue false
   end
 end
