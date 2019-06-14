@@ -39,12 +39,8 @@ class Provider
     provider = @providers.select do |provider| 
       provider.name == provider_name
     end
-
-    if provider.length == 1
-      return provider.first
-    else
-      return false
-    end
+    
+    provider.first
   end
 
   def add_service(service)

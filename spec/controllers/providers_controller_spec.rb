@@ -34,7 +34,7 @@ RSpec.describe ProvidersController do
       ProvidersController.remove
       
       expect(Provider.find_provider_by_name('Jim').name).to eq ('Jim')
-      expect(Provider.find_provider_by_name('Sue')).to be (false)
+      expect(Provider.find_provider_by_name('Sue')).to be (nil)
     end
   end
 end
