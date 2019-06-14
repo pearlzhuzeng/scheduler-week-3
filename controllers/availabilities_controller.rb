@@ -47,8 +47,8 @@ class AvailabilitiesController
 
   def self.add_start_and_end_times
     loop do
-      start_time = add_time("Start")
-      end_time = add_time("End")
+      start_time = add_time("Start Time (ex: 13:30):")
+      end_time = add_time("End Time (ex: 14:30):")
       if Time.parse(start_time) >= Time.parse(end_time)
         puts("End time must be after start time.")
       else
@@ -57,10 +57,10 @@ class AvailabilitiesController
     end
   end
 
-  def self.add_time(start_or_end)
+  def self.add_time(question)
     valid_time = false
     while !valid_time
-      time = $input_strategy.ask("#{start_or_end} Time (ex: 13:30):")
+      time = $input_strategy.ask(question)
       if !valid_time?(time)
         puts("Please enter a valid time.")
       else
@@ -81,6 +81,7 @@ class AvailabilitiesController
 
   def self.valid_time?(time_string)
     begin
+      puts(time_string)
       time = Time.parse(time_string)
     rescue ArgumentError
       return false

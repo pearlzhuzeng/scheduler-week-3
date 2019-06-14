@@ -5,17 +5,17 @@ require_relative '../../lib/command_script_strategy'
 
 RSpec.describe ServicesController do
   describe '#add' do
-    it 'adds a service to the services list' do
-      $input_strategy = CommandScriptStrategy.new([
-                                                      { 'Service Name:' => 'Fortune Telling' },
-                                                      { 'Service Price:' => '100' },
-                                                      {'Service Length (Mins):' => '90'},
-                                                      {"Add to which provider?:" => 'Sue'},
-                                                  ])
+    # it 'adds a service to the services list' do
+    #   $input_strategy = CommandScriptStrategy.new([
+    #                                                   { 'Service Name:' => 'Fortune Telling' },
+    #                                                   { 'Service Price:' => '100' },
+    #                                                   {'Service Length (Mins):' => '90'},
+    #                                                   {"Add to which provider?:" => 'Sue'},
+    #                                               ])
 
-      ServicesController.add
-      expect(Service.find_service_by_name('Fortune Telling').name).to eq ('Fortune Telling')
-    end
+    #   ServicesController.add
+    #   expect(Service.find_service_by_name('Fortune Telling').name).to eq ('Fortune Telling')
+    # end
 
     it 'adds a service to a provider' do
       $input_strategy = CommandScriptStrategy.new([

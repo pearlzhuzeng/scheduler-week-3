@@ -25,6 +25,7 @@ class ServicesController
       if provider
         service = Service.new(name, price, length)
         provider.add_service(service)
+        puts(Service.find_service_by_name(name))
         UtilityHelper.new.notify_success
         break
       else
