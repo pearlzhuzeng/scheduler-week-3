@@ -22,11 +22,7 @@ class Service
       service.name == service_name
     end
 
-    if service.length == 1
-      return service.first
-    else
-      return false
-    end
+    service.first
   end
 
   def print_details
