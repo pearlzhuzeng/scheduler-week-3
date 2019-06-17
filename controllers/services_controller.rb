@@ -18,42 +18,18 @@ class ServicesController
     name = add_service_name
     price = add_service_price
     length = add_service_length
-    
-    loop do
-      provider_name = $input_strategy.ask('Add to which provider?:')
-      provider = Provider.find_provider_by_name(provider_name)
-      if provider
-        service = Service.new(name, price, length)
-        provider.add_service(service)
-        puts(Service.find_service_by_name(name))
-        UtilityHelper.new.notify_success
-        break
-      else
-        ServiceHelper.new.error_message
-      end
-    end
+
+    service = Service.new(name, price, length)
+    service.save
+    UtilityHelper.new.notify_success
   end
 
   def self.remove
     puts "Choose Service to Remove"
     UtilityHelper.new.print_provider_services(Provider.all)
     service_name = $input_strategy.ask('Service Name:')
-    provider_name = $input_strategy.ask('Service Provider:')
-    provider_to_remove_from = nil
-    is_found = false
-    provider = Provider.all.select do |provider|
-      if provider.name == provider_name
-        provider_to_remove_from = provider
-        is_found = true
-        break      
-      end
-    end
-    if is_found
-      provider_to_remove_from.remove_service(service_name)
-      UtilityHelper.new.notify_success
-    else
-      ServiceHelper.new.error_message
-    end
+    Service.all.select { |service| service.name != service_name }
+    UtilityHelper.new.notify_success
   end
 
   private
