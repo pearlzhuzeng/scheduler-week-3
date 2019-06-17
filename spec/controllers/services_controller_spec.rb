@@ -36,7 +36,7 @@ RSpec.describe ServicesController do
       ServicesController.add
       $input_strategy = CommandScriptStrategy.new([
                                                       { 'Service Name:' => 'High Five' }
-                                                  ])
+                                                      ])
 
       ServicesController.remove
       expect(Service.find_service_by_name('High Five')).to be nil

@@ -25,10 +25,12 @@ class ServicesController
   end
 
   def self.remove
-    puts "Choose Service to Remove"
-    UtilityHelper.new.print_provider_services(Provider.all)
+    puts "Choose Service to Remove: "
     service_name = $input_strategy.ask('Service Name:')
-    Service.all.select { |service| service.name != service_name }
+    Service.all.select! { |service| service.name != service_name }
+    Provider.find_provider_by_service(service_name).each do |provider|
+      provider.remove_service(service_name)
+    end
     UtilityHelper.new.notify_success
   end
 

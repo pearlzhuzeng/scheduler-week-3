@@ -12,7 +12,7 @@ end
 
 class Provider
   @providers = [
-    Provider.new('Jim', '234-486-9800', Service.all, [], []),
+    Provider.new('Jim', '234-486-9800', Service.all[0..3], [], []),
     Provider.new('Sue', '978-123-5768', Service.all[0..2], [], [])
   ]
 end
