@@ -18,6 +18,10 @@ class Provider
     @providers
   end
 
+  def self.all_names
+    all.map {|provider| provider.name}
+  end
+
   def save
     self.class.all << self
   end
@@ -36,7 +40,7 @@ class Provider
   end
 
   def self.find_provider_by_name(provider_name)
-    provider = @providers.select do |provider| 
+    provider = @providers.select do |provider|
       provider.name == provider_name
     end
     
@@ -47,6 +51,18 @@ class Provider
     @services.push(service)
   end
 
+  def add_service_from_prompt
+    service_name = $input_strategy.select('Which service would you like to add?', Service.all_names)
+    service = Service.find_service_by_name(service_name)
+
+    add_service(service)
+  end
+
+  def remove_service_from_prompt
+    service_name = $input_strategy.select('Which service would you like to remove?', Service.all_service_names(@services))
+    remove_service(service_name)
+  end
+
   def remove_service(service_name)
     for service in @services do
       if service.name == service_name
@@ -54,6 +70,7 @@ class Provider
       end
     end
   end
+
 
   def print_services
     puts "#{Magenta}#{@name}'s#{Reset} Services:"

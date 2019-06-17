@@ -3,6 +3,11 @@ require_relative '../models/provider'
 require_relative '../helpers/utility_helper'
 
 class ProvidersController
+  UPDATE_PROVIDER_OPTIONS = {
+      "Add a service" => { method_name: :add_service_from_prompt },
+      "Remove a service" => { method_name: :remove_service_from_prompt }
+  }
+
   def self.index
     puts "Here's the current list of providers:"
 
@@ -42,6 +47,14 @@ class ProvidersController
         end
       end
     end
+  end
+
+  def self.update
+    provider_name = $input_strategy.select('Which provider would you like to update?', Provider.all_names)
+    provider = Provider.find_provider_by_name(provider_name)
+    choice = $input_strategy.select("What would you like to do?", UPDATE_PROVIDER_OPTIONS.keys)
+
+    provider.send(UPDATE_PROVIDER_OPTIONS[choice][:method_name])
   end
 
   def self.view_schedule

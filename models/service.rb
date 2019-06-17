@@ -13,6 +13,14 @@ class Service
     @services
   end
 
+  def self.all_names
+    all.map {|service| service.name}
+  end
+
+  def self.all_service_names(services_list)
+    services_list.map {|service| service.name}
+  end
+
   def save
     self.class.all << self
   end

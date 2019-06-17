@@ -17,6 +17,10 @@ class Interface
 			controller: ProvidersController,
       method_name: :remove
     },
+		"Update provider information" => {
+				controller: ProvidersController,
+				method_name: :update
+		},
     "Display all providers" => {
       controller: ProvidersController,
       method_name: :index,
