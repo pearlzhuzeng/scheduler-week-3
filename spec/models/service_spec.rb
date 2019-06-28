@@ -1,4 +1,4 @@
-require '../models/service'
+require_relative '../../models/service'
 
 RSpec.describe Service do
   it 'can be initialized' do
