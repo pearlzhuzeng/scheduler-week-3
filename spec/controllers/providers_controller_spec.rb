@@ -1,3 +1,6 @@
+require 'simplecov'
+SimpleCov.start
+
 require_relative '../../seed'
 require_relative '../../controllers/providers_controller'
 require_relative '../../lib/interface'
